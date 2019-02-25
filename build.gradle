@@ -5,7 +5,6 @@ buildscript {
         google()
         mavenLocal()
         jcenter()
-        maven { url '// Required by build-scan and error-prone plugins.' }
         maven { url 'https://plugins.gradle.org/m2/' }
     }
 
@@ -74,11 +73,11 @@ ext {
 
             // test dependencies
             junit           : "4.12",
-            assertj         : "3.5.2",
-            mockito         : "1.10.19",
+            assertj         : "3.11.1",
+            mockito         : "2.23.4",
             dexmaker        : "2.21.0",
-            truth           : "0.31",
-            testrunner      : "0.5",
+            truth           : "0.42",
+            testrunner      : "1.0.0",
             equalsverifier  : "2.1.8",
 
             // plugins
