@@ -26,46 +26,52 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.hisp.dhis.android.core.trackedentity;
+package org.hisp.dhis.android.core.enrollment.note;
 
-import android.support.test.runner.AndroidJUnit4;
+import org.hisp.dhis.android.core.common.BaseIdentifiableObject;
+import org.hisp.dhis.android.core.enrollment.Enrollment;
+import org.hisp.dhis.android.core.systeminfo.DHISVersionManager;
 
-import org.hisp.dhis.android.core.data.database.MockIntegrationShould;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.text.ParseException;
 
-import java.util.List;
+import javax.inject.Inject;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import dagger.Reusable;
 
-@RunWith(AndroidJUnit4.class)
-public class TrackedEntityModuleMockIntegrationShould extends MockIntegrationShould {
+@Reusable
+public class NoteDHISVersionManager {
 
-    @BeforeClass
-    public static void setUpAll() throws Exception {
-        downloadMetadata();
-        downloadTrackedEntityInstances();
+    private final DHISVersionManager versionManager;
+
+    @Inject
+    public NoteDHISVersionManager(DHISVersionManager versionManager) {
+        this.versionManager = versionManager;
     }
 
-    @Test
-    public void allow_access_to_all_teis_without_children() {
-        List<TrackedEntityInstance> trackedEntityInstances = d2.trackedEntityModule().trackedEntityInstances.get();
-        assertThat(trackedEntityInstances.size(), is(2));
+    public Note transform(Enrollment enrollment, Note note) {
+        Note.Builder builder = Note.builder().enrollment(enrollment.uid());
 
-        TrackedEntityInstance trackedEntityInstance = trackedEntityInstances.get(0);
-        assertThat(trackedEntityInstance.uid(), is("nWrB0TfWlvh"));
-        assertThat(trackedEntityInstance.organisationUnit(), is("DiszpKrYNg8"));
-        assertThat(trackedEntityInstance.trackedEntityAttributeValues() == null, is(true));
+        try {
+            if (this.versionManager.is2_29()) {
+                builder
+                        .storedDate(BaseIdentifiableObject.dateToDateStr(
+                        BaseIdentifiableObject.parseSpaceDate(note.storedDate())))
+                        .uid(null);
+            } else {
+                builder
+                        .storedDate(BaseIdentifiableObject.dateToDateStr(
+                        BaseIdentifiableObject.parseDate(note.storedDate())))
+                        .uid(note.uid());
+            }
+        } catch (ParseException ignored) {
+            builder
+                    .storedDate(null)
+                    .uid(null);
+        }
 
-    }
-
-    @Test
-    public void allow_access_to_one_tei_without_children() {
-        TrackedEntityInstance tei = d2.trackedEntityModule().trackedEntityInstances.uid("nWrB0TfWlvh").get();
-        assertThat(tei.uid(), is("nWrB0TfWlvh"));
-        assertThat(tei.organisationUnit(), is("DiszpKrYNg8"));
-        assertThat(tei.trackedEntityAttributeValues() == null, is(true));
+        return builder
+                .value(note.value())
+                .storedBy(note.storedBy())
+                .build();
     }
 }

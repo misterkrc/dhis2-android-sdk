@@ -28,48 +28,41 @@
 
 package org.hisp.dhis.android.core.organisationunit;
 
-import org.hisp.dhis.android.core.common.ObjectWithUid;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.hisp.dhis.android.core.arch.db.TableInfo;
+import org.hisp.dhis.android.core.common.BaseModel;
+import org.hisp.dhis.android.core.utils.Utils;
 
-import java.io.IOException;
+public final class OrganisationUnitOrganisationUnitGroupLinkTableInfo {
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.mockito.Mockito.when;
+    public static final TableInfo TABLE_INFO = new TableInfo() {
 
-@RunWith(JUnit4.class)
-public class OrganisationUnitOrganisationUnitGroupLinkModelBuilderShould {
+        @Override
+        public String name() {
+            return "OrganisationUnitOrganisationUnitGroupLink";
+        }
 
-    @Mock
-    private OrganisationUnit organisationUnit;
+        @Override
+        public Columns columns() {
+            return new Columns();
+        }
+    };
 
-    @Mock
-    private ObjectWithUid organisationUnitGroup;
-
-    private OrganisationUnitOrganisationUnitGroupLinkModel model;
-
-    @Before
-    @SuppressWarnings("unchecked")
-    public void setUp() throws IOException {
-        MockitoAnnotations.initMocks(this);
-
-        when(organisationUnit.uid()).thenReturn("organisation_unit_uid");
-        when(organisationUnitGroup.uid()).thenReturn("organisation_unit_group_uid");
-
-        model = buildModel();
+    private OrganisationUnitOrganisationUnitGroupLinkTableInfo() {
     }
 
-    private OrganisationUnitOrganisationUnitGroupLinkModel buildModel() {
-        return new OrganisationUnitOrganisationUnitGroupLinkModelBuilder(organisationUnit).buildModel(organisationUnitGroup);
-    }
+    static class Columns extends BaseModel.Columns {
 
-    @Test
-    public void copy_link_properties() {
-        assertThat(model.organisationUnit()).isEqualTo(organisationUnit.uid());
-        assertThat(model.organisationUnitGroup()).isEqualTo(organisationUnitGroup.uid());
+        public static final String ORGANISATION_UNIT = "organisationUnit";
+        public static final String ORGANISATION_UNIT_GROUP = "organisationUnitGroup";
+
+        @Override
+        public String[] all() {
+            return Utils.appendInNewArray(super.all(), ORGANISATION_UNIT, ORGANISATION_UNIT_GROUP);
+        }
+
+        @Override
+        public String[] whereUpdate() {
+            return all();
+        }
     }
 }

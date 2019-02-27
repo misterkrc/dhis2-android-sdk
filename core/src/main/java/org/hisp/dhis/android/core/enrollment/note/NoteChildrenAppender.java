@@ -25,39 +25,36 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package org.hisp.dhis.android.core.enrollment.note;
 
-package org.hisp.dhis.android.testapp.organisationunit;
+import org.hisp.dhis.android.core.arch.db.stores.SingleParentChildStore;
+import org.hisp.dhis.android.core.arch.repositories.children.ChildrenAppender;
+import org.hisp.dhis.android.core.common.StoreFactory;
+import org.hisp.dhis.android.core.data.database.DatabaseAdapter;
+import org.hisp.dhis.android.core.enrollment.Enrollment;
 
-import android.support.test.runner.AndroidJUnit4;
+public final class NoteChildrenAppender extends ChildrenAppender<Enrollment> {
 
-import org.hisp.dhis.android.core.organisationunit.OrganisationUnitProgramLink;
-import org.hisp.dhis.android.testapp.arch.BasePublicAccessShould;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 
-@RunWith(AndroidJUnit4.class)
-public class OrganisationUnitProgramLinkPublicAccessShould extends BasePublicAccessShould<OrganisationUnitProgramLink> {
+    private final SingleParentChildStore<Enrollment, Note> childStore;
 
-    @Mock
-    private OrganisationUnitProgramLink object;
-
-    @Override
-    public OrganisationUnitProgramLink object() {
-        return object;
+    private NoteChildrenAppender(SingleParentChildStore<Enrollment, Note> childStore) {
+        this.childStore = childStore;
     }
 
     @Override
-    public void has_public_create_method() {
-        OrganisationUnitProgramLink.create(null);
+    protected Enrollment appendChildren(Enrollment enrollment) {
+        Enrollment.Builder builder = enrollment.toBuilder();
+        builder.notes(childStore.getChildren(enrollment));
+        return builder.build();
     }
 
-    @Override
-    public void has_public_builder_method() {
-        OrganisationUnitProgramLink.builder();
-    }
-
-    @Override
-    public void has_public_to_builder_method() {
-        object().toBuilder();
+    public static ChildrenAppender<Enrollment> create(DatabaseAdapter databaseAdapter) {
+        return new NoteChildrenAppender(
+                StoreFactory.singleParentChildStore(
+                        databaseAdapter,
+                        NoteStore.CHILD_PROJECTION,
+                        Note::create)
+        );
     }
 }

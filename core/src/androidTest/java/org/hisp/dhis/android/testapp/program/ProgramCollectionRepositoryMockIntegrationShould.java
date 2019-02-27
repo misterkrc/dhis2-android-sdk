@@ -30,12 +30,11 @@ package org.hisp.dhis.android.testapp.program;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import org.hisp.dhis.android.core.data.database.MockIntegrationShould;
+import org.hisp.dhis.android.core.data.database.SyncedDatabaseMockIntegrationShould;
 import org.hisp.dhis.android.core.period.FeatureType;
 import org.hisp.dhis.android.core.period.PeriodType;
 import org.hisp.dhis.android.core.program.Program;
 import org.hisp.dhis.android.core.program.ProgramType;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -45,12 +44,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 @RunWith(AndroidJUnit4.class)
-public class ProgramCollectionRepositoryMockIntegrationShould extends MockIntegrationShould {
-
-    @BeforeClass
-    public static void setUpAll() throws Exception {
-        downloadMetadata();
-    }
+public class ProgramCollectionRepositoryMockIntegrationShould extends SyncedDatabaseMockIntegrationShould {
 
     @Test
     public void find_all() {
@@ -320,7 +314,7 @@ public class ProgramCollectionRepositoryMockIntegrationShould extends MockIntegr
         Program program = d2.programModule().programs
                 .one().getWithAllChildren();
         assertThat(program.programTrackedEntityAttributes().size(), is(1));
-        assertThat(program.programTrackedEntityAttributes().get(0).name(), is("Built in variables Unique ID"));
+        assertThat(program.programTrackedEntityAttributes().get(0).name(), is("Child Programme Gender"));
     }
 
     @Test

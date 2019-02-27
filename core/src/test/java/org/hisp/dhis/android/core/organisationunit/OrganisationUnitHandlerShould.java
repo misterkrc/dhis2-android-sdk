@@ -51,8 +51,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.mockito.ArgumentMatchers.anyCollectionOf;
-import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyCollectionOf;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
@@ -81,8 +80,7 @@ public class OrganisationUnitHandlerShould {
     private SyncHandler<OrganisationUnitGroup> organisationUnitGroupHandler;
 
     @Mock
-    private LinkModelHandler<ObjectWithUid,
-            OrganisationUnitOrganisationUnitGroupLinkModel> organisationUnitGroupLinkHandler;
+    private LinkSyncHandler<OrganisationUnitOrganisationUnitGroupLink> organisationUnitGroupLinkHandler;
 
     @Mock
     private CollectionCleaner<ObjectWithUid> programCollectionCleaner;
@@ -184,8 +182,8 @@ public class OrganisationUnitHandlerShould {
         organisationUnitHandler.setData(programUids, dataSetUids, user);
         organisationUnitHandler.handleMany(organisationUnits, new OrganisationUnitDisplayPathTransformer());
 
-        verify(organisationUnitGroupLinkHandler).handleMany(anyString(), anyCollectionOf(ObjectWithUid.class),
-                any(OrganisationUnitOrganisationUnitGroupLinkModelBuilder.class));
+        verify(organisationUnitGroupLinkHandler).handleMany(anyString(),
+                anyListOf(OrganisationUnitOrganisationUnitGroupLink.class));
     }
 
     @Test
@@ -194,8 +192,8 @@ public class OrganisationUnitHandlerShould {
 
         organisationUnitHandler.handleMany(Lists.newArrayList(organisationUnitWithoutGroups), new OrganisationUnitDisplayPathTransformer());
 
-        verify(organisationUnitGroupLinkHandler, never()).handleMany(anyString(), anyListOf(ObjectWithUid.class),
-                any(OrganisationUnitOrganisationUnitGroupLinkModelBuilder.class));
+        verify(organisationUnitGroupLinkHandler, never()).handleMany(anyString(),
+                anyListOf(OrganisationUnitOrganisationUnitGroupLink.class));
     }
 
     @Test

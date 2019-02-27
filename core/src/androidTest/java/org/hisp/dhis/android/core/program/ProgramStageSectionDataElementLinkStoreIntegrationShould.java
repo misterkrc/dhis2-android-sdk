@@ -26,26 +26,45 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.hisp.dhis.android.core.organisationunit;
+package org.hisp.dhis.android.core.program;
 
-import org.hisp.dhis.android.core.common.ModelBuilder;
-import org.hisp.dhis.android.core.common.ObjectWithUid;
+import android.support.test.runner.AndroidJUnit4;
 
-public class OrganisationUnitOrganisationUnitGroupLinkModelBuilder
-        implements ModelBuilder<ObjectWithUid, OrganisationUnitOrganisationUnitGroupLinkModel> {
+import org.hisp.dhis.android.core.data.database.DatabaseAdapterFactory;
+import org.hisp.dhis.android.core.data.database.LinkModelStoreAbstractIntegrationShould;
+import org.hisp.dhis.android.core.data.program.ProgramStageSectionDataElementLinkSamples;
+import org.junit.runner.RunWith;
 
-    private final OrganisationUnitOrganisationUnitGroupLinkModel.Builder builder;
+@RunWith(AndroidJUnit4.class)
+public class ProgramStageSectionDataElementLinkStoreIntegrationShould
+        extends LinkModelStoreAbstractIntegrationShould<ProgramStageSectionDataElementLink> {
 
-    OrganisationUnitOrganisationUnitGroupLinkModelBuilder(OrganisationUnit organisationUnit) {
-        this.builder = OrganisationUnitOrganisationUnitGroupLinkModel.builder()
-                .organisationUnit(organisationUnit.uid());
+    public ProgramStageSectionDataElementLinkStoreIntegrationShould() {
+        super(ProgramStageSectionDataElementLinkStore.create(DatabaseAdapterFactory.get(false)),
+                ProgramStageSectionDataElementLinkTableInfo.TABLE_INFO, DatabaseAdapterFactory.get(false));
     }
 
     @Override
-    public OrganisationUnitOrganisationUnitGroupLinkModel buildModel(ObjectWithUid organisationUnitGroup) {
+    protected String addMasterUid() {
+        return ProgramStageSectionDataElementLinkSamples.getProgramStageSectionDataElementLink().programStageSection();
+    }
 
-        return builder
-                .organisationUnitGroup(organisationUnitGroup.uid())
+    @Override
+    protected ProgramStageSectionDataElementLink buildObject() {
+        return ProgramStageSectionDataElementLinkSamples.getProgramStageSectionDataElementLink();
+    }
+
+    @Override
+    protected ProgramStageSectionDataElementLink buildObjectWithOtherMasterUid() {
+        return buildObject().toBuilder()
+                .programStageSection("new_program_stage_section")
+                .build();
+    }
+
+    @Override
+    protected ProgramStageSectionDataElementLink buildObjectWithId() {
+        return buildObject().toBuilder()
+                .id(1L)
                 .build();
     }
 }

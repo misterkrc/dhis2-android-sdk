@@ -26,34 +26,30 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.hisp.dhis.android.testapp.dataset;
+package org.hisp.dhis.android.testapp.category;
 
-import android.support.test.runner.AndroidJUnit4;
-
-import org.hisp.dhis.android.core.dataset.SectionDataElementLink;
+import org.hisp.dhis.android.core.category.CategoryCategoryOptionLink;
 import org.hisp.dhis.android.testapp.arch.BasePublicAccessShould;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
-@RunWith(AndroidJUnit4.class)
-public class SectionDataElementLinkPublicAccessShould extends BasePublicAccessShould<SectionDataElementLink> {
+public class CategoryCategoryOptionLinkPublicAccessShould extends BasePublicAccessShould<CategoryCategoryOptionLink> {
 
     @Mock
-    private SectionDataElementLink object;
+    private CategoryCategoryOptionLink object;
 
     @Override
-    public SectionDataElementLink object() {
+    public CategoryCategoryOptionLink object() {
         return object;
     }
 
     @Override
     public void has_public_create_method() {
-        SectionDataElementLink.create(null);
+        CategoryCategoryOptionLink.create(null);
     }
 
     @Override
     public void has_public_builder_method() {
-        SectionDataElementLink.builder();
+        CategoryCategoryOptionLink.builder();
     }
 
     @Override

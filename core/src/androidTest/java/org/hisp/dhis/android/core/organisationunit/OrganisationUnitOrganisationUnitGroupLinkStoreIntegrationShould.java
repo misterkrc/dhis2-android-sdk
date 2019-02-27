@@ -26,45 +26,46 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.hisp.dhis.android.core.enrollment;
+package org.hisp.dhis.android.core.organisationunit;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import org.hisp.dhis.android.core.data.database.MockIntegrationShould;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.hisp.dhis.android.core.data.database.DatabaseAdapterFactory;
+import org.hisp.dhis.android.core.data.database.LinkModelStoreAbstractIntegrationShould;
+import org.hisp.dhis.android.core.data.organisationunit.OrganisationUnitOrganisationUnitGroupLinkSamples;
 import org.junit.runner.RunWith;
 
-import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-
 @RunWith(AndroidJUnit4.class)
-public class EnrollmentModuleMockIntegrationShould extends MockIntegrationShould {
+public class OrganisationUnitOrganisationUnitGroupLinkStoreIntegrationShould
+        extends LinkModelStoreAbstractIntegrationShould<OrganisationUnitOrganisationUnitGroupLink> {
 
-    @BeforeClass
-    public static void setUpAll() throws Exception {
-        downloadMetadata();
-        downloadTrackedEntityInstances();
+    public OrganisationUnitOrganisationUnitGroupLinkStoreIntegrationShould() {
+        super(OrganisationUnitOrganisationUnitGroupLinkStore.create(DatabaseAdapterFactory.get(false)),
+                OrganisationUnitOrganisationUnitGroupLinkTableInfo.TABLE_INFO, DatabaseAdapterFactory.get(false));
     }
 
-    @Test
-    public void allow_access_to_all_enrollments_without_children() {
-        List<Enrollment> enrollments = d2.enrollmentModule().enrollments.get();
-        assertThat(enrollments.size(), is(2));
-
-        Enrollment enrollment = enrollments.get(0);
-        assertThat(enrollment.uid(), is("JILLTkO4LKQ"));
-        assertThat(enrollment.program(), is("lxAQ7Zs9VYR"));
-        assertThat(enrollment.events() == null, is(true));
+    @Override
+    protected String addMasterUid() {
+        return OrganisationUnitOrganisationUnitGroupLinkSamples.getOrganisationUnitOrganisationUnitGroupLink()
+                .organisationUnit();
     }
 
-    @Test
-    public void allow_access_to_one_enrollment_without_children() {
-        Enrollment enrollment = d2.enrollmentModule().enrollments.uid("JILLTkO4LKQ").get();
-        assertThat(enrollment.uid(), is("JILLTkO4LKQ"));
-        assertThat(enrollment.program(), is("lxAQ7Zs9VYR"));
-        assertThat(enrollment.events() == null, is(true));
+    @Override
+    protected OrganisationUnitOrganisationUnitGroupLink buildObject() {
+        return OrganisationUnitOrganisationUnitGroupLinkSamples.getOrganisationUnitOrganisationUnitGroupLink();
+    }
+
+    @Override
+    protected OrganisationUnitOrganisationUnitGroupLink buildObjectWithOtherMasterUid() {
+        return buildObject().toBuilder()
+                .organisationUnit("new_organisation_unit")
+                .build();
+    }
+
+    @Override
+    protected OrganisationUnitOrganisationUnitGroupLink buildObjectWithId() {
+        return buildObject().toBuilder()
+                .id(1L)
+                .build();
     }
 }

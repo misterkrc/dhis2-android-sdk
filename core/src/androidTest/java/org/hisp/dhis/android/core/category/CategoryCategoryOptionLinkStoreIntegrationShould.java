@@ -26,50 +26,45 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.hisp.dhis.android.core.enrollment.note;
+package org.hisp.dhis.android.core.category;
 
-import org.hisp.dhis.android.core.common.BaseIdentifiableObject;
-import org.hisp.dhis.android.core.common.Transformer;
-import org.hisp.dhis.android.core.enrollment.Enrollment;
-import org.hisp.dhis.android.core.systeminfo.DHISVersionManager;
+import android.support.test.runner.AndroidJUnit4;
 
-import java.text.ParseException;
+import org.hisp.dhis.android.core.data.category.CategoryCategoryOptionLinkSamples;
+import org.hisp.dhis.android.core.data.database.DatabaseAdapterFactory;
+import org.hisp.dhis.android.core.data.database.LinkModelStoreAbstractIntegrationShould;
+import org.junit.runner.RunWith;
 
-public class NoteToStoreTransformer implements Transformer<Note> {
+@RunWith(AndroidJUnit4.class)
+public class CategoryCategoryOptionLinkStoreIntegrationShould
+        extends LinkModelStoreAbstractIntegrationShould<CategoryCategoryOptionLink> {
 
-    private final Note.Builder builder;
-    private final DHISVersionManager versionManager;
-
-    public NoteToStoreTransformer(Enrollment enrollment, DHISVersionManager versionManager) {
-        this.versionManager = versionManager;
-        this.builder = Note.builder()
-                .enrollment(enrollment.uid());
+    public CategoryCategoryOptionLinkStoreIntegrationShould() {
+        super(CategoryCategoryOptionLinkStore.create(DatabaseAdapterFactory.get(false)),
+                CategoryCategoryOptionLinkTableInfo.TABLE_INFO, DatabaseAdapterFactory.get(false));
     }
 
     @Override
-    public Note transform(Note note) {
+    protected String addMasterUid() {
+        return CategoryCategoryOptionLinkSamples.getCategoryCategoryOptionLink().category();
+    }
 
-        try {
-            if (this.versionManager.is2_29()) {
-                builder
-                        .storedDate(BaseIdentifiableObject.dateToDateStr(
-                        BaseIdentifiableObject.parseSpaceDate(note.storedDate())))
-                        .uid(null);
-            } else {
-                builder
-                        .storedDate(BaseIdentifiableObject.dateToDateStr(
-                        BaseIdentifiableObject.parseDate(note.storedDate())))
-                        .uid(note.uid());
-            }
-        } catch (ParseException ignored) {
-            builder
-                    .storedDate(null)
-                    .uid(null);
-        }
+    @Override
+    protected CategoryCategoryOptionLink buildObject() {
+        return CategoryCategoryOptionLinkSamples.getCategoryCategoryOptionLink();
+    }
 
-        return builder
-                .value(note.value())
-                .storedBy(note.storedBy())
+    @Override
+    protected CategoryCategoryOptionLink buildObjectWithOtherMasterUid() {
+        return buildObject().toBuilder()
+                .category("new_category")
+                .build();
+    }
+
+    @Override
+    protected CategoryCategoryOptionLink buildObjectWithId() {
+        return buildObject().toBuilder()
+                .id(1L)
                 .build();
     }
 }

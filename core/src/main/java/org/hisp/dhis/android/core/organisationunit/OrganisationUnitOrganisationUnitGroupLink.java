@@ -26,26 +26,44 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.hisp.dhis.android.core.program;
+package org.hisp.dhis.android.core.organisationunit;
 
-import org.hisp.dhis.android.core.common.OrderedLinkModelBuilder;
-import org.hisp.dhis.android.core.dataelement.DataElement;
+import android.database.Cursor;
+import android.support.annotation.Nullable;
 
-public class ProgramStageSectionDataElementLinkModelBuilder extends OrderedLinkModelBuilder<DataElement,
-        ProgramStageSectionDataElementLinkModel> {
+import com.google.auto.value.AutoValue;
 
-    private final ProgramStageSectionDataElementLinkModel.Builder builder;
+import org.hisp.dhis.android.core.common.BaseModel;
+import org.hisp.dhis.android.core.common.Model;
 
-    ProgramStageSectionDataElementLinkModelBuilder(ProgramStageSection programStageSection) {
-        this.builder = ProgramStageSectionDataElementLinkModel.builder()
-                .programStageSection(programStageSection.uid());
+@AutoValue
+public abstract class OrganisationUnitOrganisationUnitGroupLink implements Model {
+
+    @Nullable
+    public abstract String organisationUnit();
+
+    @Nullable
+    public abstract String organisationUnitGroup();
+
+    public static Builder builder() {
+        return new AutoValue_OrganisationUnitOrganisationUnitGroupLink.Builder();
     }
 
-    @Override
-    public ProgramStageSectionDataElementLinkModel buildModel(DataElement dataElement, Integer sortOrder) {
-        return builder
-                .dataElement(dataElement.uid())
-                .sortOrder(sortOrder)
-                .build();
+    public static OrganisationUnitOrganisationUnitGroupLink create(Cursor cursor) {
+        return $AutoValue_OrganisationUnitOrganisationUnitGroupLink.createFromCursor(cursor);
+    }
+
+    public abstract Builder toBuilder();
+
+    @AutoValue.Builder
+    public static abstract class Builder extends BaseModel.Builder<Builder> {
+
+        public abstract Builder id(Long id);
+
+        public abstract Builder organisationUnit(String organisationUnit);
+
+        public abstract Builder organisationUnitGroup(String organisationUnitGroup);
+
+        public abstract OrganisationUnitOrganisationUnitGroupLink build();
     }
 }

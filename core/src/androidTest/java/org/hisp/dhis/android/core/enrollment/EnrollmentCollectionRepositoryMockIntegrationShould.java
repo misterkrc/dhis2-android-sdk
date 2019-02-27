@@ -26,26 +26,45 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.hisp.dhis.android.core.dataset;
+package org.hisp.dhis.android.core.enrollment;
 
-import org.hisp.dhis.android.core.common.ModelBuilder;
-import org.hisp.dhis.android.core.dataelement.DataElementOperand;
+import android.support.test.runner.AndroidJUnit4;
 
-public class SectionGreyedFieldsLinkModelBuilder
-        implements ModelBuilder<DataElementOperand, SectionGreyedFieldsLinkModel> {
+import org.hisp.dhis.android.core.data.database.SyncedDatabaseMockIntegrationShould;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-    private final SectionGreyedFieldsLinkModel.Builder builder;
+import java.util.List;
 
-    SectionGreyedFieldsLinkModelBuilder(Section section) {
-        this.builder = SectionGreyedFieldsLinkModel.builder()
-                .section(section.uid());
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+
+@RunWith(AndroidJUnit4.class)
+public class EnrollmentCollectionRepositoryMockIntegrationShould extends SyncedDatabaseMockIntegrationShould {
+
+    @Test
+    public void allow_access_to_all_enrollments_without_children() {
+        List<Enrollment> enrollments = d2.enrollmentModule().enrollments.get();
+        assertThat(enrollments.size(), is(2));
+
+        Enrollment enrollment = enrollments.get(0);
+        assertThat(enrollment.uid(), is("enroll1"));
+        assertThat(enrollment.program(), is("lxAQ7Zs9VYR"));
+        assertThat(enrollment.events() == null, is(true));
     }
 
-    @Override
-    public SectionGreyedFieldsLinkModel buildModel(DataElementOperand dataElementOperand) {
-        return builder
-                .dataElementOperand(dataElementOperand.uid())
-                .build();
+    @Test
+    public void allow_access_to_one_enrollment_without_children() {
+        Enrollment enrollment = d2.enrollmentModule().enrollments.uid("enroll1").get();
+        assertThat(enrollment.uid(), is("enroll1"));
+        assertThat(enrollment.program(), is("lxAQ7Zs9VYR"));
+        assertThat(enrollment.events() == null, is(true));
     }
 
+    @Test
+    public void include_notes_as_children() {
+        Enrollment enrollment = d2.enrollmentModule().enrollments
+                .uid("enroll2").getWithAllChildren();
+        assertThat(enrollment.notes().size(), is(2));
+    }
 }
