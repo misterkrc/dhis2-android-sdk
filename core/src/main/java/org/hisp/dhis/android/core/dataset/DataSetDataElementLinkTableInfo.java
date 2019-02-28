@@ -26,13 +26,49 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.hisp.dhis.android.core.user;
+package org.hisp.dhis.android.core.dataset;
 
-import org.hisp.dhis.android.core.common.LinkModelStore;
+import android.support.annotation.VisibleForTesting;
 
-import java.util.List;
+import org.hisp.dhis.android.core.arch.db.TableInfo;
+import org.hisp.dhis.android.core.common.BaseModel;
+import org.hisp.dhis.android.core.utils.Utils;
 
-public interface UserOrganisationUnitLinkStore extends LinkModelStore<UserOrganisationUnitLink> {
+public final class DataSetDataElementLinkTableInfo {
 
-    List<String> queryRootCaptureOrganisationUnitUids() throws RuntimeException;
+    public static final TableInfo TABLE_INFO = new TableInfo() {
+
+        @Override
+        public String name() {
+            return "DataSetDataElementLink";
+        }
+
+        @Override
+        public BaseModel.Columns columns() {
+            return new Columns();
+        }
+    };
+
+    private DataSetDataElementLinkTableInfo() {
+    }
+
+    @VisibleForTesting
+    public static class Columns extends BaseModel.Columns {
+
+        public static final String DATA_SET = "dataSet";
+        public static final String DATA_ELEMENT = "dataElement";
+        public static final String CATEGORY_COMBO = "categoryCombo";
+
+        @Override
+        public String[] all() {
+            return Utils.appendInNewArray(super.all(),
+                    DATA_SET, DATA_ELEMENT, CATEGORY_COMBO
+            );
+        }
+
+        @Override
+        public String[] whereUpdate() {
+            return Utils.appendInNewArray(super.all(), DATA_SET, DATA_ELEMENT);
+        }
+    }
 }
